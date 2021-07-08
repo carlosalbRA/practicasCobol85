@@ -1,0 +1,383 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   1
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *PRACTICA FINALL
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. PRA-FIN.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT DCLIENTE ASSIGN TO DISK INDEXED ACCESS MODE IS
+    9                             DYNAMIC
+   10                             RECORD KEY IS ID-CLIENTE-D
+   11                             ALTERNATE RECORD KEY IS ID-TARGETA-D WITH DUPLICATES
+   12                             ALTERNATE RECORD KEY IS FECHA-ALTA-D WITH DUPLICATES.
+   13
+   14                           SELECT REP-CLI ASSIGN TO PRINTER.
+   15                           SELECT REP-TAR ASSIGN TO PRINTER.
+   16
+   17                    DATA DIVISION.
+   18                    FILE SECTION.
+   19                    FD DCLIENTE.
+   20                    01 REG-CLI-D.
+   21                     03 ID-CLIENTE-D       PIC 9(04).
+   22                     03 NOMBRE-CLIENTE-D   PIC A(20).
+   23                     03 ID-TARGETA-D       PIC 99.
+   24                     03 TIPO-TARG-D        PIC A(10).
+   25                     03 ANUALIDAD-D        PIC 9(04)V99.
+   26                     03 FECHA-ALTA-D       PIC 9(08).
+   27
+   28                       FD REP-CLI.
+   29                       01  LINEA                 PIC X(132).
+   30
+   31                       FD REP-TAR.
+   32                       01 LINEA-TAR              PIC X(132).
+   33
+   34                    WORKING-STORAGE SECTION.
+   35                    01 WKS-CLIENTES-LOOP           PIC 9 VALUE 0.
+   36                       01 WKS-DETALLES-COUNT          PIC 9999 VALUE 0.
+   37                       01 WKS-CLIENTES-COUNT    PIC 9999 VALUE 0.
+   38                       01 WKS-ANUALIDA-PAR            PIC 9(07)V99.
+   39                       01 WKS-ANUALIDAD-TOTAL         PIC 9(07)V99.
+   40                       01 WKS-RES                     PIC X(01).
+   41                       01 WKS-CORTE                   PIC 9 VALUE 0.
+   42
+   43                       01 HEADER-L3-R2.
+   44                          03 FILLER           PIC X(05) VALUE SPACES.
+   45                          03 FILLER           PIC X(15) VALUE "ID DE TARGETA: ".
+   46                          03 WKS-ID-TARGETA   PIC 99.
+   47
+   48                       01 HEADER-L1-R.
+   49                            03 FILLER PIC X(40) VALUE SPACES.
+   50                            03 FILLER PIC X(19) VALUE "REPORTE DE CLIENTES".
+   51
+   52                       01 HEADER-L1-R2.
+   53                            03 FILLER PIC X(40) VALUE SPACES.
+   54                            03 FILLER PIC X(19) VALUE "REPORTE DE TARGETAS".
+   55
+   56                       01 HEADER-L2-R.
+   57                            03 FILLER        PIC X(05) VALUE SPACES.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   2
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   PRA-FIN
+
+   58                            03 FILLER        PIC X(18) VALUE "FECHA DE PROCESO: ".
+   59                            03 WKS-FECHA-PRO PIC 99/99/99.
+   60                         03 FILLER       PIC X(50) VALUE SPACES.
+   61                            03 FILLER        PIC X(05) VALUE "PAG: ".
+   62                            03 WKS-PAG       PIC 99 VALUE 1.
+   63
+   64                       01 HEADER-CAMPOS-R1.
+   65                            03 FILLER PIC X(05) VALUE SPACES.
+   66                            03 FILLER PIC X(10) VALUE "ID-CLIENTE".
+   67                            03 FILLER PIC X(10) VALUE SPACES.
+   68                            03 FILLER PIC X(06) VALUE "NOMBRE".
+   69                            03 FILLER PIC X(15) VALUE SPACES.
+   70                            03 FILLER PIC X(15) VALUE "TIPO DE TARGETA".
+   71                            03 FILLER PIC X(05) VALUE SPACES.
+   72                            03 FILLER PIC X(14) VALUE "FEC DE INGRESO".
+   73                            03 FILLER PIC X(05) VALUE SPACES.
+   74                            03 FILLER PIC X(09) VALUE "ANUALIDAD".
+   75
+   76                       01 DETALLES-CAMPOS-R.
+   77                            03 FILLER       PIC X(08) VALUE SPACES.
+   78                            03 WKS-ID-CLI   PIC 9(04).
+   79                            03 FILLER       PIC X(10) VALUE SPACES.
+   80                            03 WKS-NOMBRE   PIC A(20).
+   81                            03 FILLER       PIC X(08) VALUE SPACES.
+   82                            03 WKS-TIPO-TAR PIC A(10).
+   83                            03 FILLER       PIC X(09) VALUE SPACES.
+   84                            03 WKS-FECH-ING PIC 9(08).
+   85                            03 FILLER       PIC X(08) VALUE SPACES.
+   86                            03 WKS-ANUALIDAD PIC $Z,ZZ9.99.
+   87
+   88                       01 FOOTER-R1.
+   89                            03 FILLER PIC X(50) VALUE SPACES.
+   90                            03 FILLER PIC X(19) VALUE "TOTAL DE CLIENTES: ".
+   91                            03 WKS-CLIENTES-COUNT-R1 PIC ZZZZ.
+   92
+   93                       01 FOOTER-ANUALIDAD-PAR-R2.
+   94                            03 FILLER PIC X(44) VALUE SPACES.
+   95                            03 FILLER PIC X(22) VALUE "TOTAL DE ANUALIDAD DE ".
+   96                            03 WKS-TIPO-TARF PIC A(10).
+   97                            03 FILLER PIC X(05) VALUE SPACES.
+   98                            03 WKS-ANUALIDA-PAR-R2 PIC $Z,ZZZ,ZZ9.99 .
+   99
+  100                       01 FOOTER-ANUALIDAD-TOTAL-R2.
+  101                            03 FILLER PIC X(51) VALUE SPACES.
+  102                            03 FILLER PIC A(30) VALUE "TOTAL DE ANUALIDADES: ".
+  103                            03 WKS-ANUALIDA-TOTAL-R2 PIC $Z,ZZZ,ZZ9.99 .
+  104
+  105
+  106                    PROCEDURE DIVISION.
+  107
+  108    000002             INICIO.
+  109    000005                 PERFORM 1000-INICIO.
+  110    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 3.
+  111    000019              PERFORM 3000-FIN.
+  112    000022              STOP RUN.
+  113
+  114    000025             1000-INICIO.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   3
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   PRA-FIN
+
+  115    000028                  OPEN INPUT DCLIENTE.
+  116
+  117    000037             2000-PROCESO.
+  118    000040                  DISPLAY SPACES  LINE 01 POSITION 01 ERASE.
+  119    000054                  DISPLAY "REPORTE DE TARGETAS DE CLIENTES" LINE 01
+  120                                                                      POSITION 7.
+  121    000066                  DISPLAY "REPORTE POR CLIENTES (1) "       LINE 03
+  122                                                                      POSITION 5.
+  123    000078                  DISPLAY "REPORTE POR TARGETAS (2) "       LINE 04
+  124                                                                      POSITION 5.
+  125    000090                  DISPLAY "SALIR                (3) "       LINE 05
+  126                                                                      POSITION 5.
+  127    000102                  DISPLAY "ELEGIR OPCION : "                LINE 07
+  128                                                                      POSITION 5.
+  129    000114                  ACCEPT WKS-CLIENTES-LOOP LINE 07 POSITION 21.
+  130
+  131    000126                  DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+  132
+  133    000140                  IF WKS-CLIENTES-LOOP = 1
+  134                               MOVE 0 TO WKS-CLIENTES-LOOP
+  135                               PERFORM 2100-GENERAR-REPORTE-CLIENTE
+  136                               PERFORM 2001-MENSAJE-GENERADO
+  137                                ELSE
+  138                                    IF WKS-CLIENTES-LOOP = 2
+  139                                        MOVE 0 TO WKS-CLIENTES-LOOP
+  140                                        PERFORM 2200-GENERAR-REPORTE-IDTARGETA
+  141                                        PERFORM 2001-MENSAJE-GENERADO
+  142                                        ELSE
+  143                                            IF WKS-CLIENTES-LOOP = 3
+  144                                                NEXT SENTENCE.
+  145
+  146    000187          2001-MENSAJE-GENERADO.
+  147    000190                  DISPLAY "REPORTE GENERADO" LINE 01 POSITION 01.
+  148    000202                  DISPLAY "PRESIONE CUALQUIER TECLA PARA REGRESAR"
+  149                                                              LINE 02 POSITION 01.
+  150    000214                  ACCEPT WKS-RES LINE 02 POSITION 40.
+  151
+  152
+  153    000228             3000-FIN.
+  154    000231                  CLOSE DCLIENTE.
+  155
+  156
+  157
+  158    000240             2100-GENERAR-REPORTE-CLIENTE.
+  159    000243                 PERFORM 2110-GENERAR-REPORTE-INICIO.
+  160    000246              PERFORM 2120-DETALLE-R1 UNTIL WKS-CLIENTES-LOOP = 1.
+  161    000257              PERFORM 2130-FOOTER-R1.
+  162
+  163    000262             2110-GENERAR-REPORTE-INICIO.
+  164    000265                   OPEN OUTPUT REP-CLI.
+  165
+  166    000272                   MOVE 0 TO ID-CLIENTE-D.
+  167    000279                START DCLIENTE KEY IS > ID-CLIENTE-D.
+  168
+  169    000294                   PERFORM 2111-LEER-ARCHIVO-R1.
+  170
+  171    000297              IF WKS-CLIENTES-LOOP = 0
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   4
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   PRA-FIN
+
+  172                           PERFORM 2112-HEADER-R.
+  173
+  174    000308             2112-HEADER-R.
+  175    000311                 MOVE HEADER-L1-R TO LINEA.
+  176
+  177    000319                 IF WKS-PAG = 1
+  178                                WRITE LINEA AFTER 1
+  179                           ELSE
+  180                                WRITE LINEA AFTER PAGE.
+  181
+  182    000350                 ACCEPT WKS-FECHA-PRO FROM DATE.
+  183    000356                 MOVE HEADER-L2-R TO LINEA.
+  184    000364                 WRITE LINEA AFTER 1.
+  185
+  186    000376                 MOVE HEADER-CAMPOS-R1 TO LINEA.
+  187    000384                 WRITE LINEA AFTER 2.
+  188
+  189
+  190    000398          2111-LEER-ARCHIVO-R1.
+  191    000401              READ DCLIENTE NEXT AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+  192
+  193    000418          2120-DETALLE-R1.
+  194    000421                 MOVE ID-CLIENTE-D       TO WKS-ID-CLI.
+  195    000428              MOVE NOMBRE-CLIENTE-D   TO WKS-NOMBRE.
+  196    000435              MOVE TIPO-TARG-D        TO WKS-TIPO-TAR.
+  197    000442              MOVE ANUALIDAD-D        TO WKS-ANUALIDAD.
+  198    000447              MOVE FECHA-ALTA-D       TO WKS-FECH-ING.
+  199
+  200    000454              MOVE DETALLES-CAMPOS-R TO LINEA
+  201    000462                 WRITE LINEA AFTER 1.
+  202
+  203    000474                 ADD 1 TO WKS-CLIENTES-COUNT.
+  204    000478                 ADD 1 TO WKS-DETALLES-COUNT.
+  205
+  206    000482                 IF WKS-DETALLES-COUNT = 80
+  207                                MOVE 0 TO WKS-DETALLES-COUNT
+  208                                ADD  1 TO WKS-PAG
+  209                                PERFORM 2112-HEADER-R.
+  210
+  211
+  212    000503              PERFORM 2111-LEER-ARCHIVO-R1.
+  213
+  214    000509          2130-FOOTER-R1.
+  215    000512                 MOVE WKS-CLIENTES-COUNT TO WKS-CLIENTES-COUNT-R1.
+  216    000517                 MOVE FOOTER-R1 TO LINEA
+  217    000525                 WRITE LINEA AFTER 2.
+  218
+  219    000537                 PERFORM 2131-REINICIALIZAR-VARIABLES.
+  220
+  221    000540              CLOSE REP-CLI.
+  222
+  223    000549             2131-REINICIALIZAR-VARIABLES.
+  224    000552                 MOVE 0 TO WKS-CLIENTES-COUNT.
+  225    000559                 MOVE 0 TO WKS-DETALLES-COUNT.
+  226    000566                 MOVE 1 TO WKS-PAG.
+  227    000573                 MOVE 0 TO WKS-CLIENTES-LOOP.
+  228
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   5
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   PRA-FIN
+
+  229
+  230
+  231                   *-PROCEDIMIENTO PARA GENERAR EL REPORTE POR TARGETA
+  232
+  233    000581             2200-GENERAR-REPORTE-IDTARGETA.
+  234    000584                 PERFORM 2210-GENERAR-REPORTE2-INICIO.
+  235    000587              PERFORM 2220-DETALLE-R2 UNTIL WKS-CLIENTES-LOOP = 1.
+  236    000598                 PERFORM 2230-FOOTER-ANUALIDAD-PAR-R2.
+  237    000601              PERFORM 2231-FOOTER-ANUALIDAD-TOTAL-R2.
+  238
+  239    000606             2210-GENERAR-REPORTE2-INICIO.
+  240    000609                 OPEN OUTPUT REP-TAR
+  241
+  242    000616                 MOVE 0 TO ID-TARGETA-D.
+  243    000623              START DCLIENTE KEY IS > ID-TARGETA-D.
+  244
+  245    000638                 PERFORM 2211-LEER-ARCHIVO-R1.
+  246
+  247    000641              IF WKS-CLIENTES-LOOP = 0
+  248                              MOVE TIPO-TARG-D TO WKS-TIPO-TARF
+  249                           PERFORM 2212-HEADER-R.
+  250
+  251    000659             2212-HEADER-R.
+  252    000662                 MOVE HEADER-L1-R2 TO LINEA-TAR.
+  253
+  254    000670                 IF WKS-PAG = 1
+  255                                WRITE LINEA-TAR AFTER 1
+  256                           ELSE
+  257                                WRITE LINEA-TAR AFTER PAGE.
+  258
+  259    000701                 ACCEPT WKS-FECHA-PRO FROM DATE.
+  260    000707                 MOVE HEADER-L2-R TO LINEA-TAR.
+  261    000715                 WRITE LINEA-TAR AFTER 1.
+  262
+  263    000727                 MOVE ID-TARGETA-D TO WKS-ID-TARGETA.
+  264    000734                 MOVE HEADER-L3-R2 TO LINEA-TAR.
+  265    000742                 WRITE LINEA-TAR AFTER 2.
+  266
+  267    000754                 MOVE HEADER-CAMPOS-R1 TO LINEA-TAR.
+  268    000762                 WRITE LINEA-TAR AFTER 2
+  269
+  270    000774                 ADD  1 TO WKS-PAG
+  271    000778                 MOVE 0 TO WKS-DETALLES-COUNT.
+  272
+  273
+  274    000787          2211-LEER-ARCHIVO-R1.
+  275    000790              READ DCLIENTE NEXT AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+  276
+  277    000807          2220-DETALLE-R2.
+  278    000810                 MOVE ID-CLIENTE-D       TO WKS-ID-CLI.
+  279    000817              MOVE NOMBRE-CLIENTE-D   TO WKS-NOMBRE.
+  280    000824              MOVE TIPO-TARG-D        TO WKS-TIPO-TAR.
+  281    000831              MOVE ANUALIDAD-D        TO WKS-ANUALIDAD.
+  282    000836              MOVE FECHA-ALTA-D       TO WKS-FECH-ING.
+  283
+  284    000843                 ADD 1 TO WKS-DETALLES-COUNT.
+  285
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   6
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   PRA-FIN
+
+  286
+  287    000847                 IF WKS-DETALLES-COUNT = 80
+  288                                PERFORM 2212-HEADER-R
+  289                                MOVE 1 TO WKS-CORTE.
+  290
+  291    000864                 IF WKS-ID-TARGETA = ID-TARGETA-D
+  292                                    NEXT SENTENCE
+  293                           ELSE
+  294                                PERFORM 2230-FOOTER-ANUALIDAD-PAR-R2
+  295                                IF WKS-CORTE = 1
+  296                                    PERFORM 2212-HEADER-R
+  297                                    MOVE 0 TO WKS-ANUALIDA-PAR
+  298                                    MOVE 0 TO WKS-CORTE.
+  299
+  300    000899                  ADD ANUALIDAD-D TO WKS-ANUALIDA-PAR.
+  301    000906                  ADD ANUALIDAD-D TO WKS-ANUALIDAD-TOTAL.
+  302
+  303    000912                  MOVE DETALLES-CAMPOS-R TO LINEA-TAR
+  304    000920                  WRITE LINEA-TAR AFTER 1
+  305
+  306
+  307    000932              PERFORM 2211-LEER-ARCHIVO-R1.
+  308
+  309
+  310
+  311
+  312    000938          2230-FOOTER-ANUALIDAD-PAR-R2.
+  313    000941                 MOVE WKS-ANUALIDA-PAR TO WKS-ANUALIDA-PAR-R2
+  314    000946                 MOVE FOOTER-ANUALIDAD-PAR-R2 TO LINEA-TAR
+  315    000954                 WRITE LINEA-TAR AFTER 2
+  316    000966                 MOVE TIPO-TARG-D TO WKS-TIPO-TARF.
+  317
+  318    000975             2231-FOOTER-ANUALIDAD-TOTAL-R2.
+  319    000978                 MOVE WKS-ANUALIDAD-TOTAL       TO WKS-ANUALIDA-TOTAL-R2.
+  320    000983                 MOVE FOOTER-ANUALIDAD-TOTAL-R2 TO LINEA-TAR.
+  321    000991                 WRITE LINEA-TAR AFTER 2.
+  322
+  323    001003                 PERFORM 2232-REINICIALIZAR-VARIABLES.
+  324    001006              CLOSE REP-TAR.
+  325
+  326    001015             2232-REINICIALIZAR-VARIABLES.
+  327    001018                 MOVE 0 TO WKS-DETALLES-COUNT.
+  328    001025                 MOVE 1 TO WKS-PAG.
+  329    001032                 MOVE 0 TO WKS-CLIENTES-LOOP.
+  330    001038                 MOVE 0 TO WKS-ANUALIDAD-TOTAL.
+  331    001045                 MOVE 0 TO WKS-ANUALIDA-PAR.
+  332
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:43:18 PAGE   7
+SOURCE FILE: PRA-FIN                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           PRA-FIN
+
+
+READ ONLY SIZE =                      1998 (X"000007CE") BYTES
+
+READ/WRITE SIZE =                     1642 (X"0000066A") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       3640 (X"00000E38") BYTES      332 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM PRA-FIN
+
+
+
+OBJECT VERSION LEVEL =   1
+

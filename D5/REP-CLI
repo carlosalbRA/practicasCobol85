@@ -1,0 +1,17 @@
+
+                                        REPORTE DE CLIENTES
+     FECHA DE PROCESO: 15/03/12                                                  PAG: 01
+
+     ID-CLIENTE          NOMBRE               TIPO DE TARGETA     FEC DE INGRESO     ANUALIDAD
+        1234          Carlos Alberto              NOMINA             20050919        $    0.00
+        1475          Oscar                       NOMINA             20080203        $    0.00
+        1478          Alicia Ayala                DEBITO             20060120        $  550.00
+        4563          Carmen                      DEBITO             20110101        $  550.00
+        4685          Guadalupe                   CREDITO            20090730        $2,500.00
+        5741          Alejandro                   CREDITO            20150106        $2,500.00
+        6589          Fernando                    DEBITO             20070909        $  550.00
+        7896          German Ledesma              NOMINA             20100640        $    0.00
+        9873          Julio Cortazar              NOMINA             20070823        $    0.00
+        9874          Jose Luis                   DEBITO             20081230        $  550.00
+
+                                                  TOTAL DE CLIENTES:   10
