@@ -1,0 +1,70 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/11/15  11:06:03 PAGE   1
+SOURCE FILE: ARC-SORT                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE ARCHIVOS ORDENAR ARCHIVOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. ARC-SORT.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9                           SELECT WORKCLI ASSIGN TO DISK.
+   10                           SELECT ORDENADO ASSIGN TO DISK.
+   11
+   12                    DATA DIVISION.
+   13                    FILE SECTION.
+   14                    FD CLIENTES.
+   15                    01 REG-CLI.
+   16                            03 FILLER PIC X(50).
+   17
+   18                       FD ORDENADO.
+   19                     01 REG-CLI-S
+   20                            03 FILLER PIC X(50).
+                                 $
+*****   1) E 319: PERIOD SPACE REQUIRED *E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E*E
+
+   21
+   22                       SD WORKCLI.
+   23                     01 REG-CLI-W.
+   24                            03 ID-CLIENTE-W       PIC 9(04).
+   25                            03 NOMBRE-CLIENTE-W   PIC A(20).
+   26                            03 FILLER PIC X(26).
+   27
+   28                    WORKING-STORAGE SECTION.
+   29
+   30                    PROCEDURE DIVISION.
+   31    000002          INICIO.
+   32    000005              SORT WORKCLI ON ASCENDING KEY NOMBRE-CLIENTE-W
+   33                           USING CLIENTES GIVING ORDENADO.
+   34    000008              STOP RUN.
+   35
+   36
+   37
+   38
+   39
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/11/15  11:06:03 PAGE   2
+SOURCE FILE: ARC-SORT                   OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           ARC-SORT
+
+
+READ ONLY SIZE =                       318 (X"0000013E") BYTES
+
+READ/WRITE SIZE =                      640 (X"00000280") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        958 (X"000003BE") BYTES       39 LINES
+
+    1 ERROR         0 WARNINGS     FOR PROGRAM ARC-SORT
+
+LAST DIAGNOSTIC AT LINE:    20
+
+
+
+OBJECT VERSION LEVEL =   1
+

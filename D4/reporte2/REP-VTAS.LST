@@ -1,0 +1,402 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   1
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   ***************************************************************
+    2                   * TEMA    : REPORTE                                           *
+    3                   * OBJETIVO: ELABORACIÓN DE UN REPORTE                         *
+    4                   * PROGRAMA: GENERA UN ARCHIVO DE VENDEDORES Y ELABORA A PARTIR*
+    5                   *           DE ESTE ARCHIVO UN REPORTE                        *
+    6                   ***************************************************************
+    7                    IDENTIFICATION         DIVISION.
+    8                   *--------------------------------
+    9                    PROGRAM-ID.            REP-VTAS.
+   10                    AUTHOR.                INFOWARE, SC.
+   11                    DATE-WRITTEN.          JUNIO 2011.
+   12                   *
+   13                    ENVIRONMENT             DIVISION.
+   14                   *-------------------------------
+   15                   *
+   16                    CONFIGURATION           SECTION.
+   17                   *-------------------------------
+   18                   *
+   19                    INPUT-OUTPUT            SECTION.
+   20                   *--------------------------------
+   21                   *
+   22                    FILE-CONTROL.
+   23                   *-------------
+   24                   *
+   25                        SELECT VENDEDOR          ASSIGN TO DISK.
+   26
+   27                        SELECT  REPORTE          ASSIGN TO PRINTER.
+   28
+   29                   *
+   30                    DATA                   DIVISION.
+   31                   *-------------------------------
+   32                   *
+   33                    FILE                   SECTION.
+   34                   *-------------------------------
+   35                   *
+   36                    FD VENDEDOR.
+   37                   *================
+   38                    01 REG-VEN.
+   39                      03 CLAVE-VEN              PIC 9(03).
+   40                      03 NOMBRE-VEN             PIC X(30).
+   41                      03 VTAS-TOTALES           PIC 9(06)V99.
+   42
+   43                    FD  REPORTE.
+   44                   *=================
+   45                    01  LINEA                   PIC X(132).
+   46
+   47                   *
+   48                    WORKING-STORAGE        SECTION.
+   49                   *-------------------------------
+   50                   * --------------   VARIABLES DE TRABAJO  -------------------
+   51                    01  WKS-FIN                       PIC 9(01) VALUE ZEROES.
+   52                    01  WKS-FIN-ARC                   PIC 9(01) VALUE ZEROES.
+   53                    01  WKS-FIN-REP                   PIC 9(01) VALUE ZEROES.
+   54                    01  WKS-CONT-LIN                  PIC 9(02).
+   55                    01  WKS-CLAVE-VEN                 PIC 9(03).
+   56                    01  WKS-NOMBRE-VEN                PIC X(30).
+   57                    01  WKS-VTAS-TOTALES              PIC 9(05)V99.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   2
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+   58                    01  WKS-TOTAL                     PIC 9(07)V99.
+   59                       01  WKS-SUM-COM                   PIC 9(07)V99.
+   60                       01  WKS-TOT-COM-N                 PIC 9(07)V99.
+   61                    01  WKS-RES                       PIC X.
+   62                    01  WKS-WAIT                      PIC X.
+   63
+   64                   * --------------   VARIABLES DE REPORTE  --------------------
+   65                    01  WKS-ENC-1.
+   66                      03 FILLER                PIC X(24) VALUE SPACES.
+   67                      03 FILLER                PIC X(27)
+   68                                         VALUE "REPORTE DE VENTAS MENSUALES".
+   69                    01 WKS-ENC-2.
+   70                      03 FILLER                PIC X(60) VALUE SPACES.
+   71                      03 FILLER                PIC X(07) VALUE "PAG. : ".
+   72                      03 WKS-NUM-PAG           PIC 9(02).
+   73
+   74                    01  WKS-ENC-3.
+   75                      03 FILLER                PIC X(05)   VALUE SPACES.
+   76                      03 FILLER                PIC X(05)   VALUE "CLAVE".
+   77                      03 FILLER                PIC X(05)   VALUE SPACES.
+   78                      03 FILLER                PIC X(06)   VALUE "NOMBRE".
+   79                      03 FILLER                PIC X(28)   VALUE SPACES.
+   80                      03 FILLER                PIC X(12)   VALUE "VTAS TOTALES".
+   81                         03 FILLER                PIC X(05)   VALUE SPACES.
+   82                         03 FILLER                PIC X(10)   VALUE "% COMISION".
+   83                         03 FILLER                PIC X(05)   VALUE SPACES.
+   84                         03 FILLER                PIC X(10)   VALUE "TOTAL COM ".
+   85
+   86                    01  WKS-DET-1.
+   87                     03 FILLER                PIC X(05)   VALUE SPACES.
+   88                     03 WKS-CLAVE             PIC 9(03).
+   89                     03 FILLER                PIC X(07)   VALUE SPACES.
+   90                     03 WKS-NOMBRE            PIC X(30).
+   91                     03 FILLER                PIC X(04)   VALUE SPACES.
+   92                     03 WKS-VTAS              PIC $ZZ,ZZZ.99.
+   93                        03 FILLER                PIC X(11)   VALUE SPACES.
+   94                        03 WKS-POR-COM           PIC Z9.
+   95                        03 FILLER                PIC X(09)   VALUE SPACES.
+   96                        03 WKS-TOT-COM           PIC $ZZ,ZZ9.99.
+   97
+   98                    01  WKS-TOT-1.
+   99                     03 FILLER               PIC X(11)   VALUE SPACES.
+  100                     03 FILLER               PIC X(38)   VALUE
+  101                                  "TOTAL DE VENTAS MENSUALES Y COMISION: ".
+  102                     03 WKS-TOT-EDIT         PIC $ZZZ,ZZZ.99.
+  103                        03 FILLER               PIC X(20) VALUE SPACES.
+  104                        03 WKS-SUM-COM-E          PIC $ZZZ,ZZZ.99.
+  105
+  106                       01  WKS-LIN-FIN.
+  107                        03 FILLER PIC X(05) VALUE SPACES.
+  108                        03 FILLER PIC X(86) VALUE ALL "-".
+  109
+  110                   *
+  111                    PROCEDURE              DIVISION.
+  112                   *---------------------------------
+  113                   *
+  114    000002          100000-PROCESO-PRINCIPAL.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   3
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+  115                   *
+  116    000005              PERFORM 100000-PROCESO UNTIL WKS-FIN = 1
+  117    000016              STOP RUN.
+  118
+  119    000019          100000-PROCESO.
+  120    000022              DISPLAY SPACES LINE 01 POSITION 01 ERASE
+  121    000036              DISPLAY "PROG QUE GENERA ARCHIVO Y REP DE VTAS DE VENDEDORES"
+  122                                                                LINE 02 POSITION 10
+  123    000048              DISPLAY "GENERAR ARCHIVO DE VENDEDOR (G)"
+  124                                                                LINE 04 POSITION 05
+  125    000060              DISPLAY "GENERAR REPORTE DE VENTAS   (R)"
+  126                                                                LINE 06 POSITION 05
+  127    000072              DISPLAY "PRESIONE CUALQUIER OTRA TECLA PARA SALIR..."
+  128                                                                LINE 08 POSITION 05
+  129    000084              ACCEPT WKS-RES                          LINE 10 POSITION 05
+  130    000096              IF WKS-RES = "G"
+  131                           PERFORM 10000-GENERA-ARCHIVO
+  132                        ELSE
+  133                           IF WKS-RES = "R"
+  134                              PERFORM 20000-GENERA-REPORTE
+  135                           ELSE
+  136                              MOVE 1 TO WKS-FIN.
+  137
+  138                   ***************************************************
+  139                   **** COMIENZA PROCESO DE GENERACIÓN DE ARCHIVO ****
+  140                   **************************************************
+  141                   *
+  142    000132          10000-GENERA-ARCHIVO.
+  143                   *=======================
+  144    000135              PERFORM 11000-INICIO-GEN-ARC.
+  145    000138              PERFORM 12000-PROCESO-GEN-ARC UNTIL WKS-FIN-ARC = 1.
+  146    000149              PERFORM 13000-FIN-GEN-ARC.
+  147
+  148                   *
+  149    000154          11000-INICIO-GEN-ARC.
+  150                   *======================
+  151    000157              OPEN EXTEND VENDEDOR.
+  152
+  153                   *
+  154    000166          12000-PROCESO-GEN-ARC.
+  155                   *======================
+  156    000169              DISPLAY SPACE LINE 01  POSITION 01 ERASE.
+  157    000183              DISPLAY "PROCESO DE GENERACION DE ARCHIVO"
+  158                                                       LINE 03 POSITION 20.
+  159    000195              PERFORM 12500-CAPTURA-DATOS.
+  160    000198              PERFORM 12700-MUEVE-DATOS.
+  161    000201              DISPLAY "DESEA CAPTURAR MAS REGISTROS (S/N) "
+  162    000207              ACCEPT WKS-RES.
+  163    000215              IF WKS-RES = "N"
+  164                           MOVE 1 TO WKS-FIN-ARC.
+  165
+  166                   *
+  167    000231          12500-CAPTURA-DATOS.
+  168                   *=====================
+  169    000234              DISPLAY "INTRODUZCA LA CLAVE DEL VENDEDOR"
+  170    000240              ACCEPT WKS-CLAVE-VEN.
+  171    000246              DISPLAY "INTRODUZCA EL NOMBRE DEL VENDEDOR"
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   4
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+  172    000252              ACCEPT WKS-NOMBRE-VEN.
+  173    000260              DISPLAY "INTRODUZCA LAS VENTAS MENSUALES:"
+  174    000266              ACCEPT WKS-VTAS-TOTALES.
+  175
+  176                   *
+  177    000274          12700-MUEVE-DATOS.
+  178                   *===================
+  179    000277              MOVE WKS-CLAVE-VEN    TO CLAVE-VEN.
+  180    000284              MOVE WKS-NOMBRE-VEN   TO NOMBRE-VEN.
+  181    000291              MOVE WKS-VTAS-TOTALES TO VTAS-TOTALES.
+  182    000296              WRITE REG-VEN.
+  183
+  184                   *
+  185    000305          13000-FIN-GEN-ARC.
+  186                   *==================
+  187    000308              CLOSE VENDEDOR.
+  188    000315              DISPLAY "ARCHIVO GENERADO..."  LINE 12 POSITION 05.
+  189
+  190                   ***************************************************
+  191                   **** COMIENZA PROCESO DE GENERACIÓN DE REPORTE ****
+  192                   ***************************************************
+  193                   *
+  194    000329          20000-GENERA-REPORTE.
+  195                   *=====================
+  196    000332              DISPLAY SPACE LINE 01  POSITION 01 ERASE.
+  197    000346              DISPLAY "PROCESO DE GENERACION DE REPORTE"
+  198                                                       LINE 03 POSITION 20.
+  199    000358              PERFORM 200100-INICIO-GEN-REP.
+  200    000361              PERFORM 200200-PROCESO-GEN-REP UNTIL WKS-FIN-REP = 1.
+  201    000372              PERFORM 200300-TERMINA-GEN-REP.
+  202
+  203                   *
+  204    000377          200100-INICIO-GEN-REP.
+  205                   *-----------------------
+  206    000380              OPEN INPUT VENDEDOR
+  207                        OUTPUT REPORTE.
+  208    000393              PERFORM 200150-LEE-ARCHIVO.
+  209    000396              IF WKS-FIN-REP = 0
+  210                           PERFORM 200170-GENERA-ENCABEZADO.
+  211                   *
+  212    000407          200150-LEE-ARCHIVO.
+  213                   *--------------------
+  214    000410              READ VENDEDOR
+  215                           AT END MOVE 1 TO WKS-FIN-REP.
+  216                   *
+  217    000427          200170-GENERA-ENCABEZADO.
+  218                   *-------------------------
+  219                   *
+  220    000430              ADD  1                TO WKS-NUM-PAG.
+  221    000435              MOVE SPACES           TO  LINEA.
+  222    000441              MOVE WKS-ENC-1        TO  LINEA.
+  223    000449              WRITE  LINEA AFTER PAGE.
+  224    000458              MOVE WKS-ENC-2        TO  LINEA.
+  225    000466              WRITE  LINEA AFTER 1.
+  226    000478              MOVE WKS-ENC-3        TO  LINEA.
+  227    000486              WRITE  LINEA AFTER 3.
+  228    000498              MOVE 7  TO WKS-CONT-LIN.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   5
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+  229                   *
+  230    000507          200200-PROCESO-GEN-REP.
+  231                   *----------------------
+  232                   **  DETALLE ARCHIVO **
+  233    000510              MOVE CLAVE-VEN          TO   WKS-CLAVE.
+  234    000518              MOVE NOMBRE-VEN         TO   WKS-NOMBRE.
+  235    000525              MOVE VTAS-TOTALES       TO   WKS-VTAS.
+  236    000530              ADD  VTAS-TOTALES       TO   WKS-TOTAL.
+  237
+  238    000536                 PERFORM 200250-CALCULAR-COMISION.
+  239
+  240
+  241    000539              IF WKS-CONT-LIN > 60
+  242                          PERFORM 200170-GENERA-ENCABEZADO.
+  243    000550              MOVE WKS-DET-1          TO   LINEA
+  244    000559              WRITE LINEA AFTER 1
+  245    000571              ADD 1 TO WKS-CONT-LIN.
+  246    000575              PERFORM  200150-LEE-ARCHIVO.
+  247
+  248    000580             200250-CALCULAR-COMISION.
+  249    000583                   IF VTAS-TOTALES < 5000
+  250                                MOVE 0 TO WKS-POR-COM
+  251                                MULTIPLY 0 BY VTAS-TOTALES
+  252                                GIVING WKS-TOT-COM-N
+  253                            ELSE
+  254                                IF VTAS-TOTALES >= 5000
+  255                                   AND VTAS-TOTALES <= 15000
+  256                                    MOVE 5 TO WKS-POR-COM
+  257                                    MULTIPLY 0.05 BY VTAS-TOTALES
+  258                                    GIVING WKS-TOT-COM-N
+  259                                ELSE
+  260                                    IF VTAS-TOTALES > 15000
+  261                                        AND VTAS-TOTALES <= 25000
+  262                                        MOVE 10 TO WKS-POR-COM
+  263                                        MULTIPLY 0.1 BY VTAS-TOTALES
+  264                                        GIVING WKS-TOT-COM-N
+  265                                    ELSE
+  266                                        IF VTAS-TOTALES > 25000
+  267                                           AND VTAS-TOTALES <= 35000
+  268                                            MOVE 15 TO WKS-POR-COM
+  269                                            MULTIPLY 0.15 BY VTAS-TOTALES
+  270                                            GIVING WKS-TOT-COM-N
+  271                                        ELSE
+  272                                            MOVE 20 TO WKS-POR-COM
+  273                                            MULTIPLY 0.2 BY VTAS-TOTALES
+  274                                            GIVING WKS-TOT-COM-N.
+  275
+  276    000695              MOVE WKS-TOT-COM-N TO WKS-TOT-COM.
+  277    000701              ADD WKS-TOT-COM-N TO WKS-SUM-COM.
+  278                   *
+  279    000709          200300-TERMINA-GEN-REP.
+  280                   *--------------------
+  281    000712              MOVE WKS-TOTAL        TO  WKS-TOT-EDIT.
+  282    000717                 MOVE WKS-SUM-COM      TO  WKS-SUM-COM-E.
+  283
+  284    000722                 MOVE WKS-LIN-FIN      TO LINEA.
+  285    000730              WRITE  LINEA AFTER 1.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   6
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+  286
+  287
+  288    000742                 MOVE WKS-TOT-1        TO  LINEA.
+  289    000751                 WRITE  LINEA AFTER 1.
+  290
+  291    000763              CLOSE VENDEDOR
+  292                              REPORTE.
+  293    000776              DISPLAY "REPORTE GENERADO..."  LINE 12 POSITION 05.
+  294    000788              DISPLAY "ACEPTAR"              LINE 13 POSITION 05
+  295    000800              ACCEPT WKS-WAIT                LINE 13 POSITION 15.
+  296
+  297
+  298
+  299
+  300
+  301
+  302
+  303
+  304
+  305
+  306
+  307
+  308
+  309
+  310
+  311
+  312
+  313
+  314
+  315
+  316
+  317
+  318
+  319
+  320
+  321
+  322
+  323
+  324
+  325
+  326
+  327
+  328
+  329
+  330
+  331
+  332
+  333
+  334
+  335
+  336
+  337
+  338
+  339
+  340
+  341
+  342
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   7
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   REP-VTAS
+
+  343
+  344
+  345
+  346
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:15 PAGE   8
+SOURCE FILE: REP-VTAS                   OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           REP-VTAS
+
+
+READ ONLY SIZE =                      2074 (X"0000081A") BYTES
+
+READ/WRITE SIZE =                     1156 (X"00000484") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       3230 (X"00000C9E") BYTES      346 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM REP-VTAS
+
+
+
+OBJECT VERSION LEVEL =   1
+
