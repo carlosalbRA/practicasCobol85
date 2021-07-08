@@ -1,0 +1,136 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/06/15  16:30:49 PAGE   1
+SOURCE FILE: ARC-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE ARCHIVOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. ARC-SEC.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9
+   10                    DATA DIVISION.
+   11                    FILE SECTION.
+   12                    FD clientes.
+   13                    01 REG-CLI.
+   14                     03 ID-CLIENTE       PIC 9(04).
+   15                     03 NOMBRE-CLIENTE   PIC A(20).
+   16                     03 ID-TARGETA       PIC 99.
+   17                     03 TIPO-TARG        PIC A(10).
+   18                     03 ANUALIDAD        PIC 9(04)V99.
+   19                     03 FECHA-ALTA       PIC 9(08).
+   20
+   21                    WORKING-STORAGE SECTION.
+   22                    01 WKS-DEBITO        PIC A(10) VALUE "DEBITO".
+   23                    01 WKS-CREDITO       PIC A(10) VALUE "CREDITO".
+   24                    01 WKS-NOMINA        PIC A(10) VALUE "NIMONA".
+   25                    01 WKS-ANUALIDAD-D   PIC 9(04)V99 VALUE 550.
+   26                    01 WKS-ANUALIDAD-C   PIC 9(04)V99 VALUE 2500.
+   27                    01 WKS-ANUALIDAD-N   PIC 9(04)V99 VALUE 0.
+   28                    01 WKS-CLIENTES-LOOP PIC 9 VALUE 0.
+   29                    01 WKS-CLIENTES-RES PIC A(01).
+   30
+   31                    PROCEDURE DIVISION.
+   32    000002          INICIO.
+   33    000005              PERFORM 1000-INICIO.
+   34    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   35    000019              PERFORM 3000-FIN.
+   36    000022              STOP RUN.
+   37
+   38    000025          1000-INICIO.
+   39    000028              OPEN EXTEND CLIENTES.
+   40
+   41    000037          2000-PROCESO.
+   42    000040              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   43    000054              DISPLAY "INTRODUSCA SU ID DE CLIENTE:" LINE 03 POSITION 10.
+   44    000066              ACCEPT ID-CLIENTE LINE 03 POSITION 42.
+   45
+   46    000078              DISPLAY "INTRODUSCA SU NOMBRE:" LINE 04 POSITION 10.
+   47    000090              ACCEPT NOMBRE-CLIENTE LINE 04 POSITION 42.
+   48
+   49    000102              DISPLAY "INTRODUSCA SU ID DE TARGETA: " LINE 05 POSITION 10.
+   50    000114              ACCEPT ID-TARGETA LINE 05 POSITION 42.
+   51
+   52    000126              DISPLAY "INTRODUSCA SU FECHA DE ALTA:" LINE 06 POSITION 10.
+   53    000138              ACCEPT FECHA-ALTA LINE 06 POSITION 42.
+   54
+   55
+   56    000150              IF ID-TARGETA = 1
+   57                            MOVE WKS-DEBITO      TO TIPO-TARG
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/06/15  16:30:49 PAGE   2
+SOURCE FILE: ARC-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   ARC-SEC
+
+   58                            MOVE WKS-ANUALIDAD-D TO ANUALIDAD
+   59                        ELSE
+   60                             IF ID-TARGETA = 2
+   61                                 MOVE WKS-CREDITO     TO TIPO-TARG
+   62                                 MOVE WKS-ANUALIDAD-C TO ANUALIDAD
+   63                             ELSE
+   64                                 IF ID-TARGETA = 3
+   65                                     MOVE WKS-NOMINA     TO TIPO-TARG
+   66                                     MOVE WKS-ANUALIDAD-N TO ANUALIDAD
+   67
+   68                         .
+   69
+   70    000220               WRITE REG-CLI.
+   71
+   72    000228               DISPLAY "DESEA AGREGAR OTRO CLIENTE S/N" LINE 07 POSITION 10.
+   73    000240               ACCEPT WKS-CLIENTES-RES LINE 07 POSITION 42.
+   74
+   75    000252               IF WKS-CLIENTES-RES = "N"
+   76                             MOVE 1 TO WKS-CLIENTES-LOOP.
+   77
+   78
+   79    000268          3000-FIN.
+   80    000271              CLOSE CLIENTES.
+   81
+   82
+   83
+   84
+   85
+   86
+   87
+   88
+   89
+   90
+   91
+   92
+   93
+   94
+   95
+   96
+   97
+   98
+   99
+  100
+  101
+  102
+  103
+  104
+  105
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/06/15  16:30:49 PAGE   3
+SOURCE FILE: ARC-SEC                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           ARC-SEC
+
+
+READ ONLY SIZE =                       850 (X"00000352") BYTES
+
+READ/WRITE SIZE =                      282 (X"0000011A") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       1132 (X"0000046C") BYTES      105 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM ARC-SEC
+
+
+
+OBJECT VERSION LEVEL =   1
+
