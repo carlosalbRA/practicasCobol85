@@ -1,0 +1,71 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  15:43:10 PAGE   1
+SOURCE FILE: VERARIT                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI TERCER PROGRAMA
+    2                    IDENTIFICATION DIVISION.
+    3                     PROGRAM-ID. VERARIT.
+    4                    ENVIRONMENT DIVISION.
+    5                    DATA DIVISION.
+    6                    WORKING-STORAGE SECTION.
+    7                    01 WKS-SLDO-MEN PIC 9(05).
+    8                    01 WKS-DIAS-TRA PIC 9(02).
+    9                    01 WKS-SLDO-D   PIC 9(05)V99.
+   10                    01 WKS-SLDO-S   PIC 9(06)V99.
+   11                    01 WKS-SLDO-N   PIC 9(05)V99.
+   12                    01 WKS-D        PIC 9(02) VALUE 30.
+   13                    01 WKS-S        PIC 9(01) VALUE 7.
+   14                    01 WKS-FORMAT   PIC $ZZZ,ZZZ.99.
+   15
+   16                    PROCEDURE DIVISION.
+   17    000002          INICIO.
+   18    000005              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   19
+   20    000019              DISPLAY "INTRODUCIR TU SUELDO MENSUAL:" LINE 03 POSITION 01.
+   21    000031              ACCEPT WKS-SLDO-MEN LINE 03 POSITION 32.
+   22
+   23    000043              DISPLAY "INTRODUCIR DIAS TRABAJADOS:" LINE 04 POSITION 01.
+   24    000055              ACCEPT WKS-DIAS-TRA LINE 04 POSITION 32.
+   25
+   26    000067              DIVIDE  WKS-D INTO WKS-SLDO-MEN GIVING WKS-SLDO-D.
+   27    000075              MOVE WKS-SLDO-D TO WKS-FORMAT.
+   28
+   29    000080              DISPLAY "TU SUELDO DIARIO ES:" LINE 05 POSITION 01.
+   30    000092              DISPLAY WKS-FORMAT LINE 05 POSITION 25.
+   31
+   32    000104              MULTIPLY  WKS-SLDO-D BY WKS-S GIVING WKS-SLDO-S.
+   33    000111              MOVE WKS-SLDO-S TO WKS-FORMAT.
+   34
+   35    000116              DISPLAY "TU SUELDO SEMANAL ES:" LINE 06 POSITION 01.
+   36    000128              DISPLAY WKS-FORMAT LINE 06 POSITION 26.
+   37
+   38    000140              MULTIPLY  WKS-SLDO-D BY WKS-DIAS-TRA GIVING WKS-SLDO-N.
+   39    000147              MOVE WKS-SLDO-N TO WKS-FORMAT.
+   40
+   41    000152              DISPLAY "TU SUELDO NETO ES:" LINE 07 POSITION 01.
+   42    000164              DISPLAY WKS-FORMAT LINE 07 POSITION 26.
+   43
+   44
+   45    000176              STOP RUN.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  15:43:10 PAGE   2
+SOURCE FILE: VERARIT                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           VERARIT
+
+
+READ ONLY SIZE =                       694 (X"000002B6") BYTES
+
+READ/WRITE SIZE =                       60 (X"0000003C") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        754 (X"000002F2") BYTES       45 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM VERARIT
+
+
+
+OBJECT VERSION LEVEL =   1
+

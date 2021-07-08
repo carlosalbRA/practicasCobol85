@@ -1,0 +1,56 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/05/15  15:56:47 PAGE   1
+SOURCE FILE: PRAC2                      OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI SEGUNDO PROGRAMA
+    2                    IDENTIFICATION DIVISION.
+    3                     PROGRAM-ID. PRAC2.
+    4                    ENVIRONMENT DIVISION.
+    5                    DATA DIVISION.
+    6                    WORKING-STORAGE SECTION.
+    7                    01 WSNOMBRE-REG.
+    8                     02 WSNOMBRE PIC X(20).
+    9                     02 WSAPELLIDOP PIC X(20).
+   10                     02 WSAPELLIDOM PIC X(20).
+   11
+   12                    PROCEDURE DIVISION.
+   13    000002          INICIO.
+   14    000005              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   15
+   16    000019              DISPLAY "INGRESA TU NOMBRE" LINE 03 POSITION 03.
+   17    000031              ACCEPT WSNOMBRE LINE 03 POSITION 21.
+   18
+   19    000043              DISPLAY "INGRESA TU APELLIDO PATERNO" LINE 04 POSITION 03.
+   20    000055              ACCEPT WSAPELLIDOP LINE 04 POSITION 31.
+   21
+   22    000067              DISPLAY "INGRESA TU APELLIDO MATERNO" LINE 05 POSITION 03.
+   23    000079              ACCEPT WSAPELLIDOM LINE 05 POSITION 31.
+   24
+   25    000091              DISPLAY "TU NOMBRE COMPLETO ES:" LINE 06 POSITION 03.
+   26    000103              DISPLAY WSNOMBRE LINE 06 POSITION 25.
+   27    000115              DISPLAY WSAPELLIDOP LINE 06 POSITION 35.
+   28    000127              DISPLAY WSAPELLIDOM LINE 06 POSITION 45.
+   29
+   30    000139              STOP RUN.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/05/15  15:56:47 PAGE   2
+SOURCE FILE: PRAC2                      OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           PRAC2
+
+
+READ ONLY SIZE =                       590 (X"0000024E") BYTES
+
+READ/WRITE SIZE =                       72 (X"00000048") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        662 (X"00000296") BYTES       30 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM PRAC2
+
+
+
+OBJECT VERSION LEVEL =   1
+

@@ -1,0 +1,36 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/05/15  12:02:52 PAGE   1
+SOURCE FILE: PRAC1                      OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PRIMER PROGRAMA
+    2                    IDENTIFICATION DIVISION.
+    3                     PROGRAM-ID. PRAC1.
+    4                    ENVIRONMENT DIVISION.
+    5                    DATA DIVISION.
+    6                    PROCEDURE DIVISION.
+    7    000002          INICIO.
+    8    000005              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+    9    000019              DISPLAY "HOLA MUNDO" LINE 03 POSITION 01.
+   10    000031              STOP RUN.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/05/15  12:02:52 PAGE   2
+SOURCE FILE: PRAC1                      OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           PRAC1
+
+
+READ ONLY SIZE =                       306 (X"00000132") BYTES
+
+READ/WRITE SIZE =                       12 (X"0000000C") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        318 (X"0000013E") BYTES       10 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM PRAC1
+
+
+
+OBJECT VERSION LEVEL =   1
+
