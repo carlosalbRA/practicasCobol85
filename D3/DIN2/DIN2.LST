@@ -1,0 +1,77 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  15:47:31 PAGE   1
+SOURCE FILE: DIN2                       OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE BUSQUEDA EN ARCHIVO DE FORMA DINAMICA Y  MUESTRA
+    2                   *TODOS SECUENCIALMENTE DE ACUERDO AL ID DE TARGETA
+    3                    IDENTIFICATION DIVISION.
+    4                    PROGRAM-ID. DIN2.
+    5                    ENVIRONMENT DIVISION.
+    6
+    7                    INPUT-OUTPUT SECTION.
+    8                    FILE-CONTROL.
+    9                        SELECT DCLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+   10                             DYNAMIC
+   11                             RECORD KEY IS ID-CLIENTE-D
+   12                             ALTERNATE RECORD KEY IS ID-TARGETA-D WITH DUPLICATES
+   13                             ALTERNATE RECORD KEY IS FECHA-ALTA-D WITH DUPLICATES.
+   14
+   15                    DATA DIVISION.
+   16                    FILE SECTION.
+   17                    FD DCLIENTES.
+   18                    01 REG-CLI-D.
+   19                     03 ID-CLIENTE-D       PIC 9(04).
+   20                     03 NOMBRE-CLIENTE-D   PIC A(20).
+   21                     03 ID-TARGETA-D       PIC 99.
+   22                     03 TIPO-TARG-D        PIC A(10).
+   23                     03 ANUALIDAD-D        PIC 9(04)V99.
+   24                     03 FECHA-ALTA-D       PIC 9(08).
+   25
+   26                    WORKING-STORAGE SECTION.
+   27                    01 WKS-CLIENTES-LOOP     PIC 9 VALUE 0.
+   28
+   29                    PROCEDURE DIVISION.
+   30    000002          INICIO.
+   31    000005              PERFORM 1000-INICIO.
+   32    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   33    000019              PERFORM 3000-FIN.
+   34    000022              STOP RUN.
+   35
+   36    000025          1000-INICIO.
+   37    000028              OPEN INPUT DCLIENTES.
+   38    000035              MOVE 0 TO ID-TARGETA-D.
+   39    000042              START DCLIENTES KEY IS > ID-TARGETA-D.
+   40    000057              PERFORM 1001-LEER-ARCHIVO.
+   41
+   42    000062          1001-LEER-ARCHIVO.
+   43    000065              READ DCLIENTES NEXT AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   44
+   45    000082          2000-PROCESO.
+   46    000085              DISPLAY REG-CLI-D.
+   47    000091              PERFORM 1001-LEER-ARCHIVO.
+   48
+   49    000096          3000-FIN.
+   50    000099              CLOSE DCLIENTES.
+   51
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  15:47:31 PAGE   2
+SOURCE FILE: DIN2                       OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           DIN2
+
+
+READ ONLY SIZE =                       418 (X"000001A2") BYTES
+
+READ/WRITE SIZE =                      262 (X"00000106") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        680 (X"000002A8") BYTES       51 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM DIN2
+
+
+
+OBJECT VERSION LEVEL =   1
+

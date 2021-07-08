@@ -1,0 +1,70 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  11:18:24 PAGE   1
+SOURCE FILE: CON-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE CONSULTA DE ARCHIVOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. CON-SEC.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9
+   10                    DATA DIVISION.
+   11                    FILE SECTION.
+   12                    FD CLIENTES.
+   13                    01 REG-CLI.
+   14                     03 ID-CLIENTE       PIC 9(04).
+   15                     03 NOMBRE-CLIENTE   PIC A(20).
+   16                     03 ID-TARGETA       PIC 99.
+   17                     03 TIPO-TARG        PIC A(10).
+   18                     03 ANUALIDAD        PIC 9(04)V99.
+   19                     03 FECHA-ALTA       PIC 9(08).
+   20
+   21                    WORKING-STORAGE SECTION.
+   22                    01 WKS-CLIENTES-LOOP PIC 9 VALUE 0.
+   23
+   24                    PROCEDURE DIVISION.
+   25    000002          INICIO.
+   26    000005              PERFORM 1000-INICIO.
+   27    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   28    000019              PERFORM 3000-FIN.
+   29    000022              STOP RUN.
+   30
+   31    000025          1000-INICIO.
+   32    000028              OPEN INPUT CLIENTES.
+   33    000035              PERFORM 1001-LEER-ARCHIVO.
+   34
+   35    000040          1001-LEER-ARCHIVO.
+   36    000043              READ CLIENTES AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   37
+   38    000060          2000-PROCESO.
+   39    000063              DISPLAY REG-CLI.
+   40    000069              PERFORM 1001-LEER-ARCHIVO.
+   41
+   42    000074          3000-FIN.
+   43    000077              CLOSE CLIENTES.
+   44
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  11:18:24 PAGE   2
+SOURCE FILE: CON-SEC                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           CON-SEC
+
+
+READ ONLY SIZE =                       394 (X"0000018A") BYTES
+
+READ/WRITE SIZE =                      238 (X"000000EE") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        632 (X"00000278") BYTES       44 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM CON-SEC
+
+
+
+OBJECT VERSION LEVEL =   1
+

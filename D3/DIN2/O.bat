@@ -1,0 +1,1 @@
+C:\rmcobol\Rmcobol85\RMCOB85\RMCOB85 DIN2 L

@@ -1,0 +1,103 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  11:21:46 PAGE   1
+SOURCE FILE: DEL-INDR                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE ELIMINAR REGISTROS DE ARCHIVOS INDEXADOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. BUS-RAN.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT ICLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+    9                                                RANDOM RECORD KEY IS ID-CLIENTE-I.
+   10
+   11                    DATA DIVISION.
+   12                    FILE SECTION.
+   13                    FD ICLIENTES.
+   14                    01 REG-CLI-I.
+   15                     03 ID-CLIENTE-I       PIC 9(04).
+   16                     03 NOMBRE-CLIENTE-I   PIC A(20).
+   17                     03 ID-TARGETA-I       PIC 99.
+   18                     03 TIPO-TARG-I        PIC A(10).
+   19                     03 ANUALIDAD-I        PIC 9(04)V99.
+   20                     03 FECHA-ALTA-I       PIC 9(08).
+   21
+   22                    WORKING-STORAGE SECTION.
+   23                    01 WKS-CLIENTES-LOOP PIC 9 VALUE 0.
+   24                    01 WKS-INVALID-KEY   PIC 9 VALUE 0.
+   25                    01 WKS-RES           PIC A.
+   26
+   27                    PROCEDURE DIVISION.
+   28    000002          INICIO.
+   29    000005              PERFORM 1000-INICIO.
+   30    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   31    000019              PERFORM 3000-FIN.
+   32    000022              STOP RUN.
+   33
+   34    000025          1000-INICIO.
+   35    000028              OPEN I-O ICLIENTES.
+   36
+   37    000037          2000-PROCESO.
+   38    000040              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   39
+   40    000054              DISPLAY "INGRESE EL ID DEL CLIENTE A BUSCAR:" LINE 03
+   41                                                                         POSITION 03.
+   42    000066              ACCEPT ID-CLIENTE-I LINE 03 POSITION 39.
+   43
+   44    000078              READ ICLIENTES INVALID KEY MOVE 1 TO WKS-INVALID-KEY.
+   45
+   46    000095              IF WKS-INVALID-KEY = 1
+   47                             DISPLAY "NO EXISTE REGISTRO" LINE 04 POSITION 03
+   48                        ELSE
+   49                             DISPLAY REG-CLI-I LINE 04 POSITION 03
+   50                             PERFORM 20001-ELIMINAR-REG.
+   51
+   52
+   53    000133              DISPLAY "¿DESEA BUSCAR OTRO CLIENTE? S/N :" LINE 07
+   54                                                                         POSITION 03.
+   55    000146              ACCEPT WKS-RES LINE 07 POSITION 39.
+   56
+   57    000158              IF WKS-RES = "N"
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  11:21:46 PAGE   2
+SOURCE FILE: DEL-INDR                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   BUS-RAN
+
+   58                             MOVE 1 TO WKS-CLIENTES-LOOP
+   59                        ELSE
+   60                             MOVE 0 TO WKS-INVALID-KEY.
+   61
+   62    000183          20001-ELIMINAR-REG.
+   63    000186              DISPLAY "¿DESEA ELIMIAR EL REGISTRO S/N?" LINE 05 POSITION 03
+   64    000198              ACCEPT WKS-RES LINE 05 POSITION 36.
+   65
+   66    000210              IF WKS-RES = "S"
+   67                         DELETE ICLIENTES
+   68                         DISPLAY "ELIMINADO EXITOSAMENTE" LINE 06 POSITION 03.
+   69
+   70    000243          3000-FIN.
+   71    000246              CLOSE ICLIENTES.
+   72
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  11:21:46 PAGE   3
+SOURCE FILE: DEL-INDR                   OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           BUS-RAN
+
+
+READ ONLY SIZE =                       814 (X"0000032E") BYTES
+
+READ/WRITE SIZE =                      258 (X"00000102") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       1072 (X"00000430") BYTES       72 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM BUS-RAN
+
+
+
+OBJECT VERSION LEVEL =   1
+

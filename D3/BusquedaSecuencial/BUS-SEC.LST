@@ -1,0 +1,106 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  11:57:12 PAGE   1
+SOURCE FILE: BUS-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE BUSQUEDA EN ARCHIVO
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. BUS-SEC.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9
+   10                    DATA DIVISION.
+   11                    FILE SECTION.
+   12                    FD CLIENTES.
+   13                    01 REG-CLI.
+   14                     03 ID-CLIENTE       PIC 9(04).
+   15                     03 NOMBRE-CLIENTE   PIC A(20).
+   16                     03 ID-TARGETA       PIC 99.
+   17                     03 TIPO-TARG        PIC A(10).
+   18                     03 ANUALIDAD        PIC 9(04)V99.
+   19                     03 FECHA-ALTA       PIC 9(08).
+   20
+   21                    WORKING-STORAGE SECTION.
+   22                    01 WKS-CLIENTES-LOOP     PIC 9 VALUE 0.
+   23                    01 WKS-BUSQUEDA-LOOP     PIC 9 VALUE 0.
+   24                    01 WKS-ID-CLIENTE        PIC 9(04).
+   25                    01 WKS-CLIENTES-RES      PIC A(01).
+   26
+   27                    PROCEDURE DIVISION.
+   28    000002          INICIO.
+   29    000005              PERFORM 1000-INICIO.
+   30    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   31    000019              PERFORM 3000-FIN.
+   32    000022              STOP RUN.
+   33
+   34    000025          1000-INICIO.
+   35    000028              OPEN INPUT CLIENTES.
+   36    000035              PERFORM 1001-LEER-ARCHIVO.
+   37
+   38    000040          1001-LEER-ARCHIVO.
+   39    000043              READ CLIENTES AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   40
+   41
+   42
+   43    000060          2000-PROCESO.
+   44    000063              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   45    000077              DISPLAY "INTRODUSCA SU ID DE CLIENTE A BUSCAR" LINE 03
+   46                                                                         POSITION 01.
+   47    000089              ACCEPT WKS-ID-CLIENTE LINE 03 POSITION 42.
+   48
+   49    000101              PERFORM 2001-BUSCAR UNTIL WKS-BUSQUEDA-LOOP = 1.
+   50
+   51    000112              DISPLAY "DESEAS BUSCAR OTRO CLIENTE S/N" LINE 05 POSITION 1.
+   52    000124              ACCEPT WKS-CLIENTES-RES LINE 05 POSITION 32.
+   53
+   54    000136              IF WKS-CLIENTES-RES = "N"
+   55                             MOVE 1 TO WKS-CLIENTES-LOOP
+   56                        ELSE
+   57                             MOVE 0 TO WKS-BUSQUEDA-LOOP
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  11:57:12 PAGE   2
+SOURCE FILE: BUS-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   BUS-SEC
+
+   58                             PERFORM 3000-FIN
+   59                             PERFORM 1000-INICIO.
+   60
+   61    000167           2001-BUSCAR.
+   62    000170              IF WKS-ID-CLIENTE = ID-CLIENTE
+   63                             DISPLAY REG-CLI LINE 04 POSITION 6
+   64                             MOVE 1 TO WKS-BUSQUEDA-LOOP
+   65                        .
+   66    000195              READ CLIENTES
+   67                         AT END
+   68                             MOVE 1 TO WKS-BUSQUEDA-LOOP
+   69                             DISPLAY "NO SE ENCONTRO ALGUN CLIENTE CON ESE ID" LINE
+   70                                                                        04 POSITION 6
+   71                             .
+   72
+   73    000225          3000-FIN.
+   74    000228              CLOSE CLIENTES.
+   75
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  11:57:12 PAGE   3
+SOURCE FILE: BUS-SEC                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           BUS-SEC
+
+
+READ ONLY SIZE =                       762 (X"000002FA") BYTES
+
+READ/WRITE SIZE =                      254 (X"000000FE") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       1016 (X"000003F8") BYTES       75 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM BUS-SEC
+
+
+
+OBJECT VERSION LEVEL =   1
+

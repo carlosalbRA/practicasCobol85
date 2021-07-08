@@ -1,0 +1,94 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  09:22:10 PAGE   1
+SOURCE FILE: BUS-RAN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE CONSULTA DE ARCHIVOS INDEXADOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. BUS-RAN.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT ICLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+    9                                                RANDOM RECORD KEY IS ID-CLIENTE-I.
+   10
+   11                    DATA DIVISION.
+   12                    FILE SECTION.
+   13                    FD ICLIENTES.
+   14                    01 REG-CLI-I.
+   15                     03 ID-CLIENTE-I       PIC 9(04).
+   16                     03 NOMBRE-CLIENTE-I   PIC A(20).
+   17                     03 ID-TARGETA-I       PIC 99.
+   18                     03 TIPO-TARG-I        PIC A(10).
+   19                     03 ANUALIDAD-I        PIC 9(04)V99.
+   20                     03 FECHA-ALTA-I       PIC 9(08).
+   21
+   22                    WORKING-STORAGE SECTION.
+   23                    01 WKS-CLIENTES-LOOP PIC 9 VALUE 0.
+   24                    01 WKS-INVALID-KEY   PIC 9 VALUE 0.
+   25                    01 WKS-RES           PIC A.
+   26
+   27                    PROCEDURE DIVISION.
+   28    000002          INICIO.
+   29    000005              PERFORM 1000-INICIO.
+   30    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   31    000019              PERFORM 3000-FIN.
+   32    000022              STOP RUN.
+   33
+   34    000025          1000-INICIO.
+   35    000028              OPEN INPUT ICLIENTES.
+   36
+   37    000037          2000-PROCESO.
+   38    000040              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   39
+   40    000054              DISPLAY "INGRESE EL ID DEL CLIENTE A BUSCAR:" LINE 03
+   41                                                                         POSITION 03.
+   42    000066              ACCEPT ID-CLIENTE-I LINE 03 POSITION 39.
+   43
+   44    000078              READ ICLIENTES INVALID KEY MOVE 1 TO WKS-INVALID-KEY.
+   45
+   46    000095              IF WKS-INVALID-KEY = 1
+   47                             DISPLAY "NO EXISTE REGISTRO" LINE 04 POSITION 03
+   48                        ELSE
+   49                             DISPLAY REG-CLI-I.
+   50
+   51    000124              DISPLAY "¿DESEA BUSCAR OTRO CLIENTE? S/N :" LINE 05
+   52                                                                         POSITION 03.
+   53    000137              ACCEPT WKS-RES LINE 05 POSITION 39.
+   54
+   55    000149              IF WKS-RES = "N"
+   56                             MOVE 1 TO WKS-CLIENTES-LOOP
+   57                        ELSE
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  09:22:10 PAGE   2
+SOURCE FILE: BUS-RAN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   BUS-RAN
+
+   58                             MOVE 0 TO WKS-INVALID-KEY.
+   59
+   60
+   61    000174          3000-FIN.
+   62    000177              CLOSE ICLIENTES.
+   63
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  09:22:10 PAGE   3
+SOURCE FILE: BUS-RAN                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           BUS-RAN
+
+
+READ ONLY SIZE =                       650 (X"0000028A") BYTES
+
+READ/WRITE SIZE =                      250 (X"000000FA") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        900 (X"00000384") BYTES       63 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM BUS-RAN
+
+
+
+OBJECT VERSION LEVEL =   1
+

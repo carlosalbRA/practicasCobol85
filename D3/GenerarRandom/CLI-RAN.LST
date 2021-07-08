@@ -1,0 +1,83 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  14:22:17 PAGE   1
+SOURCE FILE: CLI-RAN                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE CONSULTA DE ARCHIVOS
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. CLI-RAN.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9                        SELECT ICLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+   10                                                RANDOM RECORD KEY IS ID-CLIENTE-I.
+   11
+   12                    DATA DIVISION.
+   13                    FILE SECTION.
+   14                    FD CLIENTES.
+   15                    01 REG-CLI.
+   16                     03 ID-CLIENTE       PIC 9(04).
+   17                     03 NOMBRE-CLIENTE   PIC A(20).
+   18                     03 ID-TARGETA       PIC 99.
+   19                     03 TIPO-TARG        PIC A(10).
+   20                     03 ANUALIDAD        PIC 9(04)V99.
+   21                     03 FECHA-ALTA       PIC 9(08).
+   22
+   23                    FD ICLIENTES.
+   24                    01 REG-CLI-I.
+   25                     03 ID-CLIENTE-I       PIC 9(04).
+   26                     03 NOMBRE-CLIENTE-I   PIC A(20).
+   27                     03 ID-TARGETA-I       PIC 99.
+   28                     03 TIPO-TARG-I        PIC A(10).
+   29                     03 ANUALIDAD-I        PIC 9(04)V99.
+   30                     03 FECHA-ALTA-I       PIC 9(08).
+   31
+   32                    WORKING-STORAGE SECTION.
+   33                    01 WKS-CLIENTES-LOOP PIC 9 VALUE 0.
+   34
+   35                    PROCEDURE DIVISION.
+   36    000002          INICIO.
+   37    000005              PERFORM 1000-INICIO.
+   38    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   39    000019              PERFORM 3000-FIN.
+   40    000022              STOP RUN.
+   41
+   42    000025          1000-INICIO.
+   43    000028              OPEN INPUT CLIENTES.
+   44    000035              OPEN OUTPUT ICLIENTES.
+   45    000042              PERFORM 1001-LEER-ARCHIVO.
+   46
+   47    000047          1001-LEER-ARCHIVO.
+   48    000050              READ CLIENTES AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   49
+   50    000067          2000-PROCESO.
+   51    000070              WRITE REG-CLI-I FROM  REG-CLI.
+   52    000087              PERFORM 1001-LEER-ARCHIVO.
+   53
+   54    000092          3000-FIN.
+   55    000095              CLOSE CLIENTES.
+   56    000102              CLOSE ICLIENTES.
+   57
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  14:22:17 PAGE   2
+SOURCE FILE: CLI-RAN                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           CLI-RAN
+
+
+READ ONLY SIZE =                       442 (X"000001BA") BYTES
+
+READ/WRITE SIZE =                      448 (X"000001C0") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        890 (X"0000037A") BYTES       57 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM CLI-RAN
+
+
+
+OBJECT VERSION LEVEL =   1
+

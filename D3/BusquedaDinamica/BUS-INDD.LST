@@ -1,0 +1,108 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:48 PAGE   1
+SOURCE FILE: BUS-INDD                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE BUSQUEDA EN ARCHIVO DE FORMA DINAMICA
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. BUS-INDD.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT DCLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+    9                             DYNAMIC
+   10                             RECORD KEY IS ID-CLIENTE-D
+   11                             ALTERNATE RECORD KEY IS ID-TARGETA-D WITH DUPLICATES
+   12                             ALTERNATE RECORD KEY IS FECHA-ALTA-D WITH DUPLICATES.
+   13
+   14                    DATA DIVISION.
+   15                    FILE SECTION.
+   16                    FD DCLIENTES.
+   17                    01 REG-CLI-D.
+   18                     03 ID-CLIENTE-D       PIC 9(04).
+   19                     03 NOMBRE-CLIENTE-D   PIC A(20).
+   20                     03 ID-TARGETA-D       PIC 99.
+   21                     03 TIPO-TARG-D        PIC A(10).
+   22                     03 ANUALIDAD-D        PIC 9(04)V99.
+   23                     03 FECHA-ALTA-D       PIC 9(08).
+   24
+   25                    WORKING-STORAGE SECTION.
+   26                    01 WKS-CLIENTES-LOOP     PIC 9 VALUE 0.
+   27                    01 WKS-ID-TARGETA        PIC 99.
+   28                    01 WKS-CLIENTES-RES      PIC A(01).
+   29
+   30                    PROCEDURE DIVISION.
+   31    000002          INICIO.
+   32    000005              PERFORM 1000-INICIO.
+   33    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   34    000019              PERFORM 3000-FIN.
+   35    000022              STOP RUN.
+   36
+   37    000025          1000-INICIO.
+   38    000028              OPEN INPUT DCLIENTES.
+   39
+   40    000037          2000-PROCESO.
+   41    000040              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   42    000054              DISPLAY "INTRODUSCA EL ID DE TARGETA:" LINE 03 POSITION 01.
+   43    000066              ACCEPT WKS-ID-TARGETA LINE 03 POSITION 32.
+   44
+   45    000078              MOVE WKS-ID-TARGETA TO ID-TARGETA-D.
+   46
+   47    000085              START DCLIENTES KEY IS = ID-TARGETA-D INVALID KEY
+   48                                                         MOVE 1 TO WKS-CLIENTES-LOOP.
+   49
+   50    000104              IF WKS-CLIENTES-LOOP = 1
+   51                            DISPLAY "NO EXISTE REGISTROS"
+   52                        ELSE
+   53                             MOVE 0 TO WKS-CLIENTES-LOOP
+   54                             PERFORM 2001-BUSCAR UNTIL WKS-CLIENTES-LOOP = 1.
+   55
+   56    000138              DISPLAY "DESEAS BUSCAR OTRO S/N".
+   57    000145              ACCEPT WKS-CLIENTES-RES.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:48 PAGE   2
+SOURCE FILE: BUS-INDD                   OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   BUS-INDD
+
+   58
+   59    000153              IF WKS-CLIENTES-RES = "N"
+   60                             MOVE 1 TO WKS-CLIENTES-LOOP
+   61                        ELSE
+   62                             MOVE 0 TO WKS-CLIENTES-LOOP.
+   63
+   64    000178           2001-BUSCAR.
+   65    000181              READ DCLIENTES NEXT AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   66
+   67    000196              IF WKS-CLIENTES-LOOP = 0
+   68                             IF WKS-ID-TARGETA = ID-TARGETA-D
+   69                                 DISPLAY REG-CLI-D
+   70                             ELSE
+   71                                 MOVE 1 TO WKS-CLIENTES-LOOP.
+   72
+   73
+   74
+   75    000227          3000-FIN.
+   76    000230              CLOSE DCLIENTES.
+   77
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/12/15  17:29:48 PAGE   3
+SOURCE FILE: BUS-INDD                   OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           BUS-INDD
+
+
+READ ONLY SIZE =                       678 (X"000002A6") BYTES
+
+READ/WRITE SIZE =                      266 (X"0000010A") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        944 (X"000003B0") BYTES       77 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM BUS-INDD
+
+
+
+OBJECT VERSION LEVEL =   1
+

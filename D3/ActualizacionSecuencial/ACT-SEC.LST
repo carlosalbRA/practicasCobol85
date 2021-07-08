@@ -1,0 +1,130 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  13:24:22 PAGE   1
+SOURCE FILE: ACT-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE ACTUALIZACION DE ARCHIVO SECUENCIAL
+    2                    IDENTIFICATION DIVISION.
+    3                    PROGRAM-ID. ACT-SEC.
+    4                    ENVIRONMENT DIVISION.
+    5
+    6                    INPUT-OUTPUT SECTION.
+    7                    FILE-CONTROL.
+    8                        SELECT CLIENTES ASSIGN TO DISK.
+    9
+   10                    DATA DIVISION.
+   11                    FILE SECTION.
+   12                    FD CLIENTES.
+   13                    01 REG-CLI.
+   14                     03 ID-CLIENTE       PIC 9(04).
+   15                     03 NOMBRE-CLIENTE   PIC A(20).
+   16                     03 ID-TARGETA       PIC 99.
+   17                     03 TIPO-TARG        PIC A(10).
+   18                     03 ANUALIDAD        PIC 9(04)V99.
+   19                     03 FECHA-ALTA       PIC 9(08).
+   20
+   21                    WORKING-STORAGE SECTION.
+   22                    01 WKS-CLIENTES-LOOP     PIC 9 VALUE 0.
+   23                    01 WKS-BUSQUEDA-LOOP     PIC 9 VALUE 0.
+   24                    01 WKS-ID-CLIENTE        PIC 9(04).
+   25                    01 WKS-CLIENTES-RES      PIC A(01).
+   26                    01 WKS-DEBITO        PIC A(10) VALUE "DEBITO".
+   27                    01 WKS-CREDITO       PIC A(10) VALUE "CREDITO".
+   28                    01 WKS-NOMINA        PIC A(10) VALUE "NOMINA".
+   29                    01 WKS-ANUALIDAD-D   PIC 9(04)V99 VALUE 550.
+   30                    01 WKS-ANUALIDAD-C   PIC 9(04)V99 VALUE 2500.
+   31                    01 WKS-ANUALIDAD-N   PIC 9(04)V99 VALUE 0.
+   32
+   33                    PROCEDURE DIVISION.
+   34    000002          INICIO.
+   35    000005              PERFORM 1000-INICIO.
+   36    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   37    000019              PERFORM 3000-FIN.
+   38    000022              STOP RUN.
+   39
+   40    000025          1000-INICIO.
+   41    000028              OPEN I-O CLIENTES.
+   42    000035              PERFORM 1001-LEER-ARCHIVO.
+   43
+   44    000040          1001-LEER-ARCHIVO.
+   45    000043              READ CLIENTES AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   46
+   47
+   48
+   49    000060          2000-PROCESO.
+   50    000063              DISPLAY SPACES LINE 01 POSITION 01 ERASE.
+   51    000077              DISPLAY "INTRODUSCA SU ID DE CLIENTE A BUSCAR" LINE 03
+   52                                                                         POSITION 01.
+   53    000089              ACCEPT WKS-ID-CLIENTE LINE 03 POSITION 42.
+   54
+   55    000101              PERFORM 2001-BUSCAR UNTIL WKS-BUSQUEDA-LOOP = 1.
+   56
+   57    000112              DISPLAY "DESEAS BUSCAR OTRO CLIENTE S/N" LINE 06 POSITION 1.
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  13:24:22 PAGE   2
+SOURCE FILE: ACT-SEC                    OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8   ACT-SEC
+
+   58    000124              ACCEPT WKS-CLIENTES-RES LINE 06 POSITION 32.
+   59
+   60    000136              IF WKS-CLIENTES-RES = "N"
+   61                             MOVE 1 TO WKS-CLIENTES-LOOP
+   62                        ELSE
+   63                             MOVE 0 TO WKS-BUSQUEDA-LOOP
+   64                             PERFORM 3000-FIN
+   65                             PERFORM 1000-INICIO.
+   66
+   67    000167           2001-BUSCAR.
+   68    000170              IF WKS-ID-CLIENTE = ID-CLIENTE
+   69                             DISPLAY REG-CLI LINE 04 POSITION 6
+   70                             MOVE 1 TO WKS-BUSQUEDA-LOOP
+   71
+   72                             DISPLAY "INTRODUSCA SU ID DE TARGETA: " LINE 05 POSITION
+   73                                                                              6
+   74                             ACCEPT ID-TARGETA LINE 05 POSITION 40
+   75
+   76                             IF ID-TARGETA = 1
+   77                                 MOVE WKS-DEBITO      TO TIPO-TARG
+   78                                 MOVE WKS-ANUALIDAD-D TO ANUALIDAD
+   79                             ELSE
+   80                                 IF ID-TARGETA = 2
+   81                                     MOVE WKS-CREDITO     TO TIPO-TARG
+   82                                     MOVE WKS-ANUALIDAD-C TO ANUALIDAD
+   83                                 ELSE
+   84                                     MOVE WKS-NOMINA     TO TIPO-TARG
+   85                                     MOVE WKS-ANUALIDAD-N TO ANUALIDAD
+   86
+   87                         .
+   88    000281              REWRITE REG-CLI.
+   89
+   90    000289              READ CLIENTES
+   91                         AT END
+   92                             MOVE 1 TO WKS-BUSQUEDA-LOOP
+   93                             DISPLAY "NO SE ENCONTRO ALGUN CLIENTE CON ESE ID" LINE
+   94                                                                        04 POSITION 6
+   95                             .
+   96
+   97    000318          3000-FIN.
+   98    000321              CLOSE CLIENTES.
+   99
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/09/15  13:24:22 PAGE   3
+SOURCE FILE: ACT-SEC                    OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           ACT-SEC
+
+
+READ ONLY SIZE =                       914 (X"00000392") BYTES
+
+READ/WRITE SIZE =                      302 (X"0000012E") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =       1216 (X"000004C0") BYTES       99 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM ACT-SEC
+
+
+
+OBJECT VERSION LEVEL =   1
+

@@ -1,0 +1,75 @@
+
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  15:30:46 PAGE   1
+SOURCE FILE: BUS-DS                     OPTIONS: L
+
+ LINE   DEBUG     PG/LN  A...B.......2.........3.........4.........5.........6.........7..ID.....8
+
+    1                   *MI PROGRAMA DE BUSQUEDA EN ARCHIVO DE FORMA DINAMICA Y  MUESTRA
+    2                   *TODOS SECUENCIALMENTE
+    3                    IDENTIFICATION DIVISION.
+    4                    PROGRAM-ID. BUS-DS.
+    5                    ENVIRONMENT DIVISION.
+    6
+    7                    INPUT-OUTPUT SECTION.
+    8                    FILE-CONTROL.
+    9                        SELECT DCLIENTES ASSIGN TO DISK INDEXED ACCESS MODE IS
+   10                             DYNAMIC
+   11                             RECORD KEY IS ID-CLIENTE-D
+   12                             ALTERNATE RECORD KEY IS ID-TARGETA-D WITH DUPLICATES
+   13                             ALTERNATE RECORD KEY IS FECHA-ALTA-D WITH DUPLICATES.
+   14
+   15                    DATA DIVISION.
+   16                    FILE SECTION.
+   17                    FD DCLIENTES.
+   18                    01 REG-CLI-D.
+   19                     03 ID-CLIENTE-D       PIC 9(04).
+   20                     03 NOMBRE-CLIENTE-D   PIC A(20).
+   21                     03 ID-TARGETA-D       PIC 99.
+   22                     03 TIPO-TARG-D        PIC A(10).
+   23                     03 ANUALIDAD-D        PIC 9(04)V99.
+   24                     03 FECHA-ALTA-D       PIC 9(08).
+   25
+   26                    WORKING-STORAGE SECTION.
+   27                    01 WKS-CLIENTES-LOOP     PIC 9 VALUE 0.
+   28
+   29                    PROCEDURE DIVISION.
+   30    000002          INICIO.
+   31    000005              PERFORM 1000-INICIO.
+   32    000008              PERFORM 2000-PROCESO UNTIL WKS-CLIENTES-LOOP = 1.
+   33    000019              PERFORM 3000-FIN.
+   34    000022              STOP RUN.
+   35
+   36    000025          1000-INICIO.
+   37    000028              OPEN INPUT DCLIENTES.
+   38    000035              PERFORM 1001-LEER-ARCHIVO.
+   39
+   40    000040          1001-LEER-ARCHIVO.
+   41    000043              READ DCLIENTES NEXT AT END MOVE 1 TO WKS-CLIENTES-LOOP.
+   42
+   43    000060          2000-PROCESO.
+   44    000063              DISPLAY REG-CLI-D.
+   45    000069              PERFORM 1001-LEER-ARCHIVO.
+   46
+   47    000074          3000-FIN.
+   48    000077              CLOSE DCLIENTES.
+   49
+RM/COBOL-85 (VER 2.01)  FOR DOS 2.00+          03/10/15  15:30:46 PAGE   2
+SOURCE FILE: BUS-DS                     OPTIONS: L
+
+PROGRAM SUMMARY STATISTICS                                                                           BUS-DS
+
+
+READ ONLY SIZE =                       394 (X"0000018A") BYTES
+
+READ/WRITE SIZE =                      262 (X"00000106") BYTES
+
+OVERLAYABLE SEGMENT SIZE =               0 (X"00000000") BYTES
+
+TOTAL SIZE (LESS I/O BUFFERS) =        656 (X"00000290") BYTES       49 LINES
+
+    0 ERRORS         0 WARNINGS     FOR PROGRAM BUS-DS
+
+
+
+OBJECT VERSION LEVEL =   1
+
